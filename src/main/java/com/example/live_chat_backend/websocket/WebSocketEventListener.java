@@ -21,28 +21,24 @@ public class WebSocketEventListener {
     public void handleSessionConnected(SessionConnectedEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String userId = getUser(accessor);
+        String roomId = accessor.getFirstNativeHeader("room-id");
 
-        if (!registry.tryAddUser(userId)) {
-            log.warn("User limit reached. Reject connection for: {}", userId);
-            simpMessagingTemplate.convertAndSendToUser(
-                    userId,
-                    "/queue/errors",
-                    "User limit of 8 reached. Connection denied."
-            );
-
-            throw new WebSocketLimitException("User limit exceeded for userId=" + userId);
+        if (!registry.tryAddUser(roomId, userId)) {
+            log.warn("User limit reached in room: " + roomId);
+            throw new IllegalStateException("Room full");
         }
 
-        log.info("User connected: {}", userId);
+        log.info("User connected: {} to room {}", userId, roomId);
     }
 
     @EventListener
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String userId = getUser(accessor);
+        String roomId = accessor.getFirstNativeHeader("room-id");
 
-        registry.removeUser(userId);
-        log.info("User disconnected: {}", userId);
+        registry.removeUser(userId, roomId);
+        log.info("User disconnected: {} from room {}", userId, roomId);
     }
 
     private String getUser(StompHeaderAccessor accessor) {
