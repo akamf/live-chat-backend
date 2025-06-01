@@ -1,6 +1,6 @@
 package com.example.live_chat_backend.service;
 
-import com.example.live_chat_backend.dto.ChatMessage;
+import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,12 @@ public class MessageService {
         this.repository = repository;
     }
 
-    public void saveMessage(ChatMessage message) {
+    public void saveMessage(ChatMessageRequestDto message) {
         String timestamp = message.timestamp() != null
                 ? message.timestamp()
                 : Instant.now().toString();
 
-        ChatMessage updated = new ChatMessage(
+        ChatMessageRequestDto updated = new ChatMessageRequestDto(
                 message.sender(),
                 message.content(),
                 timestamp
@@ -30,7 +30,7 @@ public class MessageService {
         repository.save(updated);
     }
 
-    public List<ChatMessage> getRecentMessages(int limit) {
+    public List<ChatMessageRequestDto> getRecentMessages(int limit) {
         return repository.findRecent(limit);
     }
 }

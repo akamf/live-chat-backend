@@ -1,6 +1,6 @@
 package com.example.live_chat_backend.controller;
 
-import com.example.live_chat_backend.dto.ChatMessage;
+import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,13 +23,13 @@ public class ChatController {
     }
 
     @MessageMapping("/chat")
-    public void handleIncomingMessage(ChatMessage message) {
+    public void handleIncomingMessage(ChatMessageRequestDto message) {
         log.info("Received message from {}: {}", message.sender(), message.content());
 
         messageService.saveMessage(message);
         messagingTemplate.convertAndSend("/topic/chat", message);
 
-        ChatMessage fallback = new ChatMessage("System", "Echo: " + message.content(), message.timestamp());
+        ChatMessageRequestDto fallback = new ChatMessageRequestDto("System", "Echo: " + message.content(), message.timestamp());
         messagingTemplate.convertAndSend("/topic/chat", fallback);
     }
 }

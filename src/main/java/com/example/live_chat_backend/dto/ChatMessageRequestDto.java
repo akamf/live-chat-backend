@@ -1,6 +1,6 @@
 package com.example.live_chat_backend.dto;
 
-public record ChatMessage(
+public record ChatMessageRequestDto(
         String sender,
         String content,
         String timestamp

@@ -1,6 +1,6 @@
 package com.example.live_chat_backend.controller;
 
-import com.example.live_chat_backend.dto.ChatMessage;
+import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.service.MessageService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class MessageController {
     }
 
     @GetMapping("/recent")
-    public List<ChatMessage> getRecentMessages() {
+    public List<ChatMessageRequestDto> getRecentMessages() {
         return messageService.getRecentMessages(50);
     }
 }
