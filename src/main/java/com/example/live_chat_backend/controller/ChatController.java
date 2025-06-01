@@ -1,11 +1,14 @@
 package com.example.live_chat_backend.controller;
 
 import com.example.live_chat_backend.dto.ChatMessageRequestDto;
+import com.example.live_chat_backend.dto.ChatMessageResponseDto;
 import com.example.live_chat_backend.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.time.Instant;
 
 @Slf4j
 @Controller
@@ -29,7 +32,13 @@ public class ChatController {
         messageService.saveMessage(message);
         messagingTemplate.convertAndSend("/topic/chat", message);
 
-        ChatMessageRequestDto fallback = new ChatMessageRequestDto("System", "Echo: " + message.content(), message.timestamp());
-        messagingTemplate.convertAndSend("/topic/chat", fallback);
+        ChatMessageResponseDto callback = new ChatMessageResponseDto(
+                "System",
+                "Echo: " + message.content(),
+                Instant.now().toString(),
+                message.roomId()
+        );
+
+        messagingTemplate.convertAndSend("/topic/chat", callback);
     }
 }

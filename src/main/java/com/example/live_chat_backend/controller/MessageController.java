@@ -1,11 +1,9 @@
 package com.example.live_chat_backend.controller;
 
-import com.example.live_chat_backend.dto.ChatMessageRequestDto;
+import com.example.live_chat_backend.dto.ChatMessageResponseDto;
 import com.example.live_chat_backend.service.MessageService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +18,10 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping("/recent")
-    public List<ChatMessageRequestDto> getRecentMessages() {
-        return messageService.getRecentMessages(50);
+    @GetMapping("/{roomId}")
+    public ResponseEntity<List<ChatMessageResponseDto>> getRecentMessages(@PathVariable String roomId) {
+        List<ChatMessageResponseDto> result = messageService.getRecentMessages(roomId);
+        return ResponseEntity.ok(result);
     }
+
 }
