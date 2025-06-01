@@ -17,7 +17,7 @@ public class WebSocketEventListener {
     @EventListener
     public void handleSessionConnected(SessionConnectedEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = accessor.getUser() != null ? accessor.getUser().getName() : accessor.getSessionId();
+        String userId = getUser(accessor);
 
         if (!registry.tryAddUser(userId)) {
             log.warn("User limit reached. Reject connection for: {}", userId);
@@ -29,10 +29,13 @@ public class WebSocketEventListener {
     @EventListener
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = accessor.getUser() != null ? accessor.getUser().getName() : accessor.getSessionId();
+        String userId = getUser(accessor);
 
         registry.removeUser(userId);
         log.info("User disconnected: {}", userId);
     }
 
+    private String getUser(StompHeaderAccessor accessor) {
+        return accessor.getUser() != null ? accessor.getUser().getName() : accessor.getSessionId();
+    }
 }
