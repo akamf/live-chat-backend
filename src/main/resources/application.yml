@@ -6,10 +6,10 @@ spring:
     username: akamf
     password: s3cr37
     driver-class-name: org.postgresql.Driver
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update # TODO: Change to validate
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update # TODO: Change to validate
-      show-sql: true
-      properties:
-        hibernate:
-          format_sql: true
+        format_sql: true
