@@ -34,7 +34,7 @@ public class ChatController {
         log.info("Received message from {} inside {}: {}", message.sender(), roomId, message.content());
 
         messageService.saveMessage(message.toChatMessage());
-        messagingTemplate.convertAndSend("/topic/" + roomId, message);
+        messagingTemplate.convertAndSend("/topic/" + roomId, message.toChatMessage());
 
         ChatMessageResponseDto callback = new ChatMessageResponseDto(
                 "System",
