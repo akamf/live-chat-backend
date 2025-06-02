@@ -3,7 +3,7 @@ package com.example.live_chat_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -16,6 +16,6 @@ public class ChatMessage {
 
     private String sender;
     private String content;
-    private Instant timestamp;
+    private LocalDateTime timestamp;
     private String roomId;
 }

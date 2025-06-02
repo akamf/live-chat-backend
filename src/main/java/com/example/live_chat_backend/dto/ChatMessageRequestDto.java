@@ -2,8 +2,7 @@ package com.example.live_chat_backend.dto;
 
 import com.example.live_chat_backend.entity.ChatMessage;
 
-import java.time.Instant;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 public record ChatMessageRequestDto(
         String sender,
@@ -14,7 +13,7 @@ public record ChatMessageRequestDto(
         return ChatMessage.builder()
                 .sender(this.sender())
                 .content(this.content())
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .roomId(this.roomId())
                 .build();
     }

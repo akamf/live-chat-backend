@@ -8,7 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Controller
@@ -35,7 +35,7 @@ public class ChatController {
         ChatMessageResponseDto callback = new ChatMessageResponseDto(
                 "System",
                 "Echo: " + message.content(),
-                Instant.now().toString(),
+                LocalDateTime.now().toString(),
                 message.roomId()
         );
 
