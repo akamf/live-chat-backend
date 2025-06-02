@@ -48,6 +48,6 @@ public class ChatController {
 
     @MessageExceptionHandler
     public void handleException(Throwable exception) {
-        log.error("❌ WebSocket message error:", exception);
+        log.error("WebSocket message error:", exception);
     }
 }
