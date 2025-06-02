@@ -1,5 +1,6 @@
 package com.example.live_chat_backend.config;
 
+import com.example.live_chat_backend.websocket.RoomHandshakeInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -20,7 +21,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")  // TODO: Update to frontend-domain after deploy
+                .addInterceptors(new RoomHandshakeInterceptor())
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 }
