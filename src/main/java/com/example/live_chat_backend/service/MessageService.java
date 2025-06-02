@@ -1,6 +1,5 @@
 package com.example.live_chat_backend.service;
 
-import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.dto.ChatMessageResponseDto;
 import com.example.live_chat_backend.entity.ChatMessage;
 import com.example.live_chat_backend.repository.MessageRepository;
@@ -17,8 +16,7 @@ public class MessageService {
         this.repository = repository;
     }
 
-    public void saveMessage(ChatMessageRequestDto dto) {
-        ChatMessage entity = dto.toChatMessage();
+    public void saveMessage(ChatMessage entity) {
         repository.save(entity);
     }
 

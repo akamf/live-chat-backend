@@ -4,7 +4,7 @@ import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.dto.ChatMessageResponseDto;
 import com.example.live_chat_backend.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,14 +28,13 @@ public class ChatController {
     }
 
     @MessageMapping("/chat")
-    public void handleIncomingMessage(
-            @DestinationVariable String roomId,
-            @Payload ChatMessageRequestDto message
-    ) {
+    public void handleIncomingMessage(@Payload ChatMessageRequestDto message) {
+        String roomId = message.roomId();
+
         log.info("Received message from {} inside {}: {}", message.sender(), roomId, message.content());
 
-        messageService.saveMessage(new ChatMessageRequestDto(message.sender(), message.content(), roomId));
-        messagingTemplate.convertAndSend("/topic/chat", message);
+        messageService.saveMessage(message.toChatMessage());
+        messagingTemplate.convertAndSend("/topic/" + roomId, message);
 
         ChatMessageResponseDto callback = new ChatMessageResponseDto(
                 "System",
@@ -44,6 +43,11 @@ public class ChatController {
                 roomId
         );
 
-        messagingTemplate.convertAndSend("/topic/chat", callback);
+        messagingTemplate.convertAndSend("/topic/" + roomId, callback);
+    }
+
+    @MessageExceptionHandler
+    public void handleException(Throwable exception) {
+        log.error("❌ WebSocket message error:", exception);
     }
 }
