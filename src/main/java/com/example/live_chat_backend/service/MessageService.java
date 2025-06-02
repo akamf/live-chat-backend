@@ -23,12 +23,7 @@ public class MessageService {
     public List<ChatMessageResponseDto> getRecentMessages(String roomId) {
         return repository.findTop20ByRoomIdOrderByTimestampDesc(roomId)
                 .stream()
-                .map(m -> new ChatMessageResponseDto(
-                        m.getSender(),
-                        m.getContent(),
-                        m.getTimestamp().toString(),
-                        m.getRoomId()
-                ))
+                .map(ChatMessageResponseDto::fromEntity)
                 .toList();
     }
 }
