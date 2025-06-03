@@ -12,4 +12,6 @@ public interface ChatRoomConnectionRepository extends JpaRepository<ChatRoomConn
     List<ChatRoomConnection> findByChatRoom_Id(Long chatRoomId);
     List<ChatRoomConnection> findByUser_Id(String userId);
     void deleteByUser_IdAndChatRoom_Id(String userId, Long ChatRoomId);
+
+    int countByChatRoom_Id(Long roomId);
 }
