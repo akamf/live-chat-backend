@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat_room_connections")
-@IdClass(ChatRoomConnection.class)
+@IdClass(ChatRoomConnectionId.class)
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ChatRoomConnection {
 
