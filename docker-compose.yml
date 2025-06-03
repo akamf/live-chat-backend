@@ -21,15 +21,31 @@ services:
       dockerfile: Dockerfile
     container_name: chat-backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chat-db
-      SPRING_DATASOURCE_USERNAME: akamf
-      SPRING_DATASOURCE_PASSWORD: s3cr37
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:jk.3r%258WQ%40%26qubP@db.dcdmidsgamsyejqvjzfe.supabase.co:5432/postgres?sslmode=require
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: UD5JMJVj6t7T_QW
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      #SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chat-db
+      #SPRING_DATASOURCE_USERNAME: akamf
+      #SPRING_DATASOURCE_PASSWORD: s3cr37
+
     depends_on:
       - postgres
     ports:
       - "8080:8080"
     networks:
         - chat-net
+
+  frontend:
+    build:
+      context: ../live-chat-frontend
+      dockerfile: Dockerfile
+    container_name: chat-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - chat-net
 
 volumes:
   postgres_data:

@@ -2,9 +2,9 @@ spring:
   application:
     name: live-chat-backend
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/chat-db}
-    username: ${SPRING_DATASOURCE_USERNAME:akamf}
-    password: ${SPRING_DATSOURCE_PASSWORD:s3cr37}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:jk.3r%258WQ%40%26qubP@db.dcdmidsgamsyejqvjzfe.supabase.co:5432/postgres?sslmode=require}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATSOURCE_PASSWORD:UD5JMJVj6t7T_QW}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
