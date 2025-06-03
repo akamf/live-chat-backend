@@ -13,10 +13,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -30,14 +32,22 @@ public class WebSocketEventListener {
     private final ChatRoomRepository chatRoomRepository;
 
     @EventListener
+    @Transactional(readOnly = true)
     public void handleSessionConnect(SessionConnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+
         String userId = accessor.getFirstNativeHeader("user-id");
         String roomId = accessor.getFirstNativeHeader("room-id");
 
         if (roomId == null || userId == null) {
             log.error("Missing room-id or user-id. room-id={}, user-id={}", roomId, userId);
             return;
+        }
+
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        if (sessionAttributes != null) {
+            sessionAttributes.put("room-id", roomId);
+            sessionAttributes.put("user-id", userId);
         }
 
         Optional<ChatRoom> chatRoomOpt = chatRoomRepository.findById(Long.valueOf(roomId));
@@ -62,32 +72,35 @@ public class WebSocketEventListener {
                 .user(user)
                 .joinedAt(LocalDateTime.now())
                 .build();
-
         connectionRepository.save(connection);
-        String systemMessage = String.format("User %s joined",user.getName());
 
         simpMessagingTemplate.convertAndSend(
                 "/topic/" + roomId,
-                new SystemMessage(systemMessage, LocalDateTime.now().toString())
+                new SystemMessage(String.format("User %s joined",user.getName()), LocalDateTime.now().toString())
         );
-        log.info(systemMessage);
+        log.debug("Connect: sessionId={}, room-id={}, user-id={}",
+                accessor.getSessionId(), roomId, userId);
     }
 
     @EventListener
+    @Transactional
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = accessor.getFirstNativeHeader("user-id");
-        String roomId = accessor.getFirstNativeHeader("room-id");
+
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        String roomId = sessionAttributes != null ? (String) sessionAttributes.get("room-id") : null;
+        String userId = sessionAttributes != null ? (String) sessionAttributes.get("user-id") : null;
 
         if (roomId == null || userId == null) return;
 
         connectionRepository.deleteByUser_IdAndChatRoom_Id(userId, Long.valueOf(roomId));
-        String systemMessage = String.format("User with ID %s left", userId);
+
+        log.debug("Disconnect: sessionId={}, room-id={}, user-id={}",
+                accessor.getSessionId(), roomId, userId);
 
         simpMessagingTemplate.convertAndSend(
                 "/topic/" + roomId,
-                new SystemMessage(systemMessage, LocalDateTime.now().toString())
+                new SystemMessage(String.format("User with ID %s left", userId), LocalDateTime.now().toString())
         );
-        log.info(systemMessage);
     }
 }
