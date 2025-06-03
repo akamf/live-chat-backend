@@ -3,6 +3,7 @@ package com.example.live_chat_backend.controller;
 import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.dto.ChatMessageResponseDto;
 import com.example.live_chat_backend.dto.SystemMessage;
+import com.example.live_chat_backend.dto.TypingStatus;
 import com.example.live_chat_backend.entity.ChatMessage;
 import com.example.live_chat_backend.entity.User;
 import com.example.live_chat_backend.service.MessageService;
@@ -47,6 +48,14 @@ public class ChatController {
         );
 
         log.info("System Echo: {}", message.getContent());
+    }
+
+    @MessageMapping("/typing") // listens on /app/typing
+    public void handleTypingStatus(TypingStatus status) {
+        messagingTemplate.convertAndSend(
+                "/topic/" + status.roomId() + "/typing",
+                status
+        );
     }
 
     @MessageExceptionHandler

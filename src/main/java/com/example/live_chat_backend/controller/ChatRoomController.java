@@ -2,7 +2,6 @@ package com.example.live_chat_backend.controller;
 
 import com.example.live_chat_backend.entity.ChatRoom;
 import com.example.live_chat_backend.entity.User;
-import com.example.live_chat_backend.repository.ChatRoomConnectionRepository;
 import com.example.live_chat_backend.repository.ChatRoomRepository;
 import com.example.live_chat_backend.repository.UserRepository;
 import com.example.live_chat_backend.websocket.WebSocketSessionRegistry;
