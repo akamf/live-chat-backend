@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class ChatRoomConnectionId implements Serializable {
 
-    private Long user;
+    private String user;
     private Long chatRoom;
 
     @Override

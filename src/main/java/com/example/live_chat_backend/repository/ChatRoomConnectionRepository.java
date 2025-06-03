@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ChatRoomConnectionRepository extends JpaRepository<ChatRoomConnection, ChatRoomConnectionId> {
     List<ChatRoomConnection> findByChatRoom_Id(Long chatRoomId);
-    List<ChatRoomConnection> findByUser_Id(Long userId);
-    void deleteByUser_IdAndChatRoom_Id(Long userId, Long ChatRoomId);
+    List<ChatRoomConnection> findByUser_Id(String userId);
+    void deleteByUser_IdAndChatRoom_Id(String userId, Long ChatRoomId);
 }

@@ -16,8 +16,8 @@ public class MessageService {
         this.repository = repository;
     }
 
-    public void saveMessage(ChatMessage entity) {
-        repository.save(entity);
+    public void saveMessage(ChatMessage message) {
+        repository.save(message);
     }
 
     public List<ChatMessageResponseDto> getRecentMessages(String roomId) {

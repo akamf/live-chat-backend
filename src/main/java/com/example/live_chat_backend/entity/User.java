@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -21,6 +20,7 @@ public class User {
     private String name;
     private String password;
     private LocalDateTime lastLogin;
+    private boolean isOnline;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

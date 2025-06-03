@@ -18,6 +18,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("api/chat-rooms")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ChatRoomController {
 
@@ -37,7 +38,7 @@ public class ChatRoomController {
     }
 
     @PostMapping("/{roomId}/join/{userId}")
-    public ResponseEntity<?> joinRoom(@PathVariable Long roomId, @PathVariable Long userId) {
+    public ResponseEntity<?> joinRoom(@PathVariable Long roomId, @PathVariable String userId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<ChatRoom> room = chatRoomRepository.findById(roomId);
 
@@ -64,7 +65,7 @@ public class ChatRoomController {
     }
 
     @DeleteMapping("/{roomId}/leave/{userId}")
-    public ResponseEntity<?> leaveRoom(@PathVariable Long roomId, @PathVariable Long userId) {
+    public ResponseEntity<?> leaveRoom(@PathVariable Long roomId, @PathVariable String userId) {
         connectionRepository.deleteByUser_IdAndChatRoom_Id(userId, roomId);
         sessionRegistry.removeUser(String.valueOf(roomId), String.valueOf(userId));
         log.info("User {} left Room {}", userId, roomId);

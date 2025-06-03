@@ -10,7 +10,7 @@ public record ChatMessageResponseDto(
 ) {
     public static ChatMessageResponseDto fromEntity(ChatMessage entity) {
         return new ChatMessageResponseDto(
-                entity.getSender(),
+                entity.getSender().getName(),
                 entity.getContent(),
                 entity.getTimestamp().toString(),
                 entity.getRoomId()

@@ -2,7 +2,11 @@ package com.example.live_chat_backend.controller;
 
 import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.dto.ChatMessageResponseDto;
+import com.example.live_chat_backend.entity.ChatMessage;
+import com.example.live_chat_backend.entity.User;
 import com.example.live_chat_backend.service.MessageService;
+import com.example.live_chat_backend.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,31 +18,36 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
-
-    public ChatController(
-            SimpMessagingTemplate messagingTemplate,
-            MessageService messageService
-    ) {
-        this.messagingTemplate = messagingTemplate;
-        this.messageService = messageService;
-    }
+    private final UserService userService;
 
     @MessageMapping("/chat")
-    public void handleIncomingMessage(@Payload ChatMessageRequestDto message) {
-        String roomId = message.roomId();
+    public void handleIncomingMessage(@Payload ChatMessageRequestDto messageDto) {
+        String roomId = messageDto.roomId();
+        User sender = userService.findById(messageDto.userId());
 
-        log.info("Received message from {} inside {}: {}", message.sender(), roomId, message.content());
+        ChatMessage message = ChatMessage.builder()
+                .sender(sender)
+                .content(messageDto.content())
+                .timestamp(LocalDateTime.now())
+                .roomId(roomId)
+                .build();
 
-        messageService.saveMessage(message.toChatMessage());
-        messagingTemplate.convertAndSend("/topic/" + roomId, message.toChatMessage());
+        log.info("Received message from {} inside {}: {}", sender.getName(), roomId, message.getContent());
+
+        messageService.saveMessage(message);
+        messagingTemplate.convertAndSend(
+                "/topic/" + roomId,
+                ChatMessageResponseDto.fromEntity(message)
+        );
 
         ChatMessageResponseDto callback = new ChatMessageResponseDto(
                 "System",
-                "Echo: " + message.content(),
+                "Echo: " + message.getContent(),
                 LocalDateTime.now().toString(),
                 roomId
         );
