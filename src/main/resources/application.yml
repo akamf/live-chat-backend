@@ -2,13 +2,13 @@ spring:
   application:
     name: live-chat-backend
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres.dcdmidsgamsyejqvjzfe}
+    password: ${SPRING_DATASOURCE_PASSWORD:UD5JMJVj6t7T_QW}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:

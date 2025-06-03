@@ -46,12 +46,7 @@ public class ChatController {
                 ChatMessageResponseDto.fromEntity(message)
         );
 
-        SystemMessage callback = new SystemMessage(
-                "System Echo: " + message.getContent(),
-                LocalDateTime.now().toString()
-        );
-
-        messagingTemplate.convertAndSend("/topic/" + roomId, callback);
+        log.info("System Echo: {}", message.getContent());
     }
 
     @MessageExceptionHandler

@@ -38,7 +38,6 @@ public class WebSocketEventListener {
 
         try {
             eventService.connectUserToRoom(userId, Long.valueOf(roomId));
-            eventService.sendSystemMessage(roomId, "User " + userId + " joined");
         } catch (Exception e) {
             log.warn("Connection failed: {}", e.getMessage());
         }
@@ -56,6 +55,5 @@ public class WebSocketEventListener {
         if (userId == null || roomId == null) return;
 
         eventService.disconnectUserFromRoom(userId, Long.valueOf(roomId));
-        eventService.sendSystemMessage(roomId, "User " + userId + " left");
     }
 }

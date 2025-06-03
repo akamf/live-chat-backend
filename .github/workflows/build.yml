@@ -46,4 +46,3 @@ jobs:
             SPRING_DATASOURCE_URL=jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres
             SPRING_DATASOURCE_USERNAME=postgres.dcdmidsgamsyejqvjzfe
             SPRING_DATASOURCE_PASSWORD=UD5JMJVj6t7T_QW
-            

@@ -41,17 +41,21 @@ public class ChatRoomEventService {
                 .joinedAt(LocalDateTime.now())
                 .build()
         );
+        sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " joined");
 
         log.debug("User {} connected to room {}", userId, roomId);
     }
 
     @Transactional
     public void disconnectUserFromRoom(String userId, Long roomId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         connectionRepo.deleteByUser_IdAndChatRoom_Id(userId, roomId);
+        sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " left");
         log.debug("User {} disconnected from room {}", userId, roomId);
     }
 
-    public void sendSystemMessage(String roomId, String content) {
+    private void sendSystemMessage(String roomId, String content) {
         SystemMessage msg = new SystemMessage(content, LocalDateTime.now().toString());
         messagingTemplate.convertAndSend("/topic/" + roomId, msg);
         log.info("[Room {}] {}", roomId, content);
