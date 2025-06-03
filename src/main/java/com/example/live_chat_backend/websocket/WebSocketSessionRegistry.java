@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 @Component
 public class WebSocketSessionRegistry {
     private static final int MAX_USERS_PER_ROOM = 8; // TODO: Make this dynamic
-    private final ConcurrentHashMap<String, Set<String>> sessionsPerRoom = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Set<String>> sessionsPerRoom = new ConcurrentHashMap<>();
 
-    public boolean tryAddUser(String roomId, String userId) {
+    public boolean tryAddUser(Long roomId, String userId) {
         sessionsPerRoom.putIfAbsent(roomId, ConcurrentHashMap.newKeySet());
         Set<String> users = sessionsPerRoom.get(roomId);
 
@@ -34,15 +34,11 @@ public class WebSocketSessionRegistry {
         }
     }
 
-    public Set<String> getUsersInRoom(String roomId) {
+    public Set<String> getUsersInRoom(Long roomId) {
         return sessionsPerRoom.getOrDefault(roomId, Set.of());
     }
 
-    public int getUserCount(String roomId) {
-        return getUsersInRoom(roomId).size();
-    }
-
-    public Map<String, Integer> getOnlineCounts() {
+    public Map<Long, Integer> getOnlineCounts() {
         return sessionsPerRoom.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,

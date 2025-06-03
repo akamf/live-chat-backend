@@ -29,7 +29,7 @@ public class ChatRoomController {
 
     @GetMapping("{roomId}/online")
     public ResponseEntity<?> getOnlineUsers(@PathVariable Long roomId) {
-        return ResponseEntity.ok(sessionRegistry.getUsersInRoom(String.valueOf(roomId)));
+        return ResponseEntity.ok(sessionRegistry.getUsersInRoom(roomId));
     }
 
     @GetMapping("/online-counts")
@@ -47,7 +47,7 @@ public class ChatRoomController {
             return ResponseEntity.notFound().build();
         }
 
-        if (!sessionRegistry.tryAddUser(String.valueOf(roomId), String.valueOf(userId))) {
+        if (!sessionRegistry.tryAddUser(roomId, userId)) {
             log.warn("Chat Room with ID {} is full", roomId);
             return ResponseEntity.status(403).body("Chat Room is full");
         }

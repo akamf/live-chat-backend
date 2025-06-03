@@ -2,6 +2,7 @@ package com.example.live_chat_backend.controller;
 
 import com.example.live_chat_backend.dto.ChatMessageRequestDto;
 import com.example.live_chat_backend.dto.ChatMessageResponseDto;
+import com.example.live_chat_backend.dto.SystemMessage;
 import com.example.live_chat_backend.entity.ChatMessage;
 import com.example.live_chat_backend.entity.User;
 import com.example.live_chat_backend.service.MessageService;
@@ -45,11 +46,9 @@ public class ChatController {
                 ChatMessageResponseDto.fromEntity(message)
         );
 
-        ChatMessageResponseDto callback = new ChatMessageResponseDto(
-                "System",
-                "Echo: " + message.getContent(),
-                LocalDateTime.now().toString(),
-                roomId
+        SystemMessage callback = new SystemMessage(
+                "System Echo: " + message.getContent(),
+                LocalDateTime.now().toString()
         );
 
         messagingTemplate.convertAndSend("/topic/" + roomId, callback);

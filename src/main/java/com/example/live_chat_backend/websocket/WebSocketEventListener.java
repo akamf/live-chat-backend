@@ -1,5 +1,6 @@
 package com.example.live_chat_backend.websocket;
 
+import com.example.live_chat_backend.dto.SystemMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -19,9 +21,9 @@ public class WebSocketEventListener {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @EventListener
-    public void handleSessionConnected(SessionConnectEvent event) {
+    public void handleSessionConnect(SessionConnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = getUser(accessor);
+        String userId = accessor.getFirstNativeHeader("user-id");
 
         Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
         String roomId = sessionAttributes != null ? (String) sessionAttributes.get("room-id") : null;
@@ -31,12 +33,19 @@ public class WebSocketEventListener {
             return;
         }
 
-        if (!registry.tryAddUser(roomId, userId)) {
+        if (!registry.tryAddUser(Long.valueOf(roomId), userId)) {
             log.warn("User limit reached in room: {}", roomId);
             throw new IllegalStateException("Room full");
         }
 
         log.info("User connected: {} to room {}", userId, roomId);
+        simpMessagingTemplate.convertAndSend(
+                "/topic/" + roomId,
+                new SystemMessage(
+                        "User " + userId + " joined",
+                        LocalDateTime.now().toString()
+                )
+        );
     }
 
     @EventListener
@@ -48,7 +57,15 @@ public class WebSocketEventListener {
         String roomId = sessionAttributes != null ? (String) sessionAttributes.get("room-id") : null;
 
         registry.removeUser(userId, roomId);
+
         log.info("User disconnected: {} from room {}", userId, roomId);
+        simpMessagingTemplate.convertAndSend(
+                "/topic/" + roomId,
+                new SystemMessage(
+                        "User " + userId + " left",
+                        LocalDateTime.now().toString()
+                )
+        );
     }
 
     private String getUser(StompHeaderAccessor accessor) {
