@@ -24,9 +24,7 @@ public class WebSocketEventListener {
     public void handleSessionConnect(SessionConnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String userId = accessor.getFirstNativeHeader("user-id");
-
-        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
-        String roomId = sessionAttributes != null ? (String) sessionAttributes.get("room-id") : null;
+        String roomId = accessor.getFirstNativeHeader("room-id");
 
         if (roomId == null || userId == null) {
             log.error("Missing room-id or user-id. room-id={}, user-id={}", roomId, userId);
@@ -51,12 +49,8 @@ public class WebSocketEventListener {
     @EventListener
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = getUser(accessor);
-
-        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
-        String roomId = sessionAttributes != null ? (String) sessionAttributes.get("room-id") : null;
-
-        registry.removeUser(userId, roomId);
+        String userId = accessor.getFirstNativeHeader("user-id");
+        String roomId = accessor.getFirstNativeHeader("room-id");
 
         log.info("User disconnected: {} from room {}", userId, roomId);
         simpMessagingTemplate.convertAndSend(
@@ -66,9 +60,5 @@ public class WebSocketEventListener {
                         LocalDateTime.now().toString()
                 )
         );
-    }
-
-    private String getUser(StompHeaderAccessor accessor) {
-        return accessor.getUser() != null ? accessor.getUser().getName() : accessor.getSessionId();
     }
 }
