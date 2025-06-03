@@ -18,6 +18,7 @@ import java.util.Map;
 public class WebSocketEventListener {
 
     private final ChatRoomEventService eventService;
+    private final WebSocketSessionRegistry sessionRegistry;
 
     @EventListener
     public void handleSessionConnect(SessionConnectEvent event) {
@@ -37,7 +38,9 @@ public class WebSocketEventListener {
         }
 
         try {
-            eventService.connectUserToRoom(userId, Long.valueOf(roomId));
+            Long room = Long.valueOf(roomId);
+            eventService.connectUserToRoom(userId, room);
+            sessionRegistry.register(room, userId);
         } catch (Exception e) {
             log.warn("Connection failed: {}", e.getMessage());
         }
@@ -52,8 +55,10 @@ public class WebSocketEventListener {
         String userId = sessionAttributes != null ? (String) sessionAttributes.get("user-id") : null;
         String roomId = sessionAttributes != null ? (String) sessionAttributes.get("room-id") : null;
 
-        if (userId == null || roomId == null) return;
-
-        eventService.disconnectUserFromRoom(userId, Long.valueOf(roomId));
+        if (userId != null && roomId != null) {
+            Long room = Long.valueOf(roomId);
+            eventService.disconnectUserFromRoom(userId, room);
+            sessionRegistry.unregister(room, userId);
+        }
     }
 }

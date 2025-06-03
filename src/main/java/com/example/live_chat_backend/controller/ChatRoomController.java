@@ -1,10 +1,11 @@
 package com.example.live_chat_backend.controller;
 
 import com.example.live_chat_backend.entity.ChatRoom;
-import com.example.live_chat_backend.entity.ChatRoomConnection;
 import com.example.live_chat_backend.entity.User;
 import com.example.live_chat_backend.repository.ChatRoomConnectionRepository;
 import com.example.live_chat_backend.repository.ChatRoomRepository;
+import com.example.live_chat_backend.repository.UserRepository;
+import com.example.live_chat_backend.websocket.WebSocketSessionRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,23 +24,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomController {
 
-    private final ChatRoomConnectionRepository connectionRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
+    private final WebSocketSessionRegistry sessionRegistry;
 
     @GetMapping("/{roomId}/online")
     public ResponseEntity<?> getOnlineUsers(@PathVariable Long roomId) {
-        List<ChatRoomConnection> connections = connectionRepository.findByChatRoom_Id(roomId);
-        List<User> users = connections.stream().map(ChatRoomConnection::getUser).toList();
+        Set<String> activeUserIds = sessionRegistry.getUsersInRoom(roomId);
+        List<User> users = activeUserIds.stream()
+                .map(id -> userRepository.findById(id).orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/online-counts")
     public ResponseEntity<?> getOnlineCounts() {
-        Map<Long, Long> counts = connectionRepository.findAll().stream()
-                .collect(Collectors.groupingBy(
-                        c -> c.getChatRoom().getId(),
-                        Collectors.counting()
-                ));
+        Map<Long, Integer> counts = sessionRegistry.getAll().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
+
         return ResponseEntity.ok(counts);
     }
     @GetMapping("/public")
@@ -47,5 +53,4 @@ public class ChatRoomController {
                 .toList();
         return ResponseEntity.ok(publicRooms);
     }
-
 }
