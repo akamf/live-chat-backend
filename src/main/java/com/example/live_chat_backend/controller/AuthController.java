@@ -13,7 +13,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -22,12 +22,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequestDto request) {
         User savedUser = userService.createOrUpdateUser(request);
+        log.info("User logging in: {}", savedUser.getId());
         return ResponseEntity.ok(savedUser);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody Map<String, String> body) {
         String userId = body.get("userId");
+        log.info("User logging out: {}", userId);
         userService.logoutUser(userId);
         return ResponseEntity.ok().build();
     }
