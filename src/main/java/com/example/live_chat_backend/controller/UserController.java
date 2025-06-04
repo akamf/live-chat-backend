@@ -1,5 +1,6 @@
 package com.example.live_chat_backend.controller;
 
+import com.example.live_chat_backend.dto.SettingsDto;
 import com.example.live_chat_backend.dto.UpdateUserRequestDto;
 import com.example.live_chat_backend.entity.User;
 import com.example.live_chat_backend.service.UserService;
@@ -26,5 +27,17 @@ public class UserController {
         String userId = jwt.getSubject();
         User updatedUser = userService.updateUserName(userId, request.name());
         return ResponseEntity.ok(updatedUser);
+    }
+    @GetMapping("/settings")
+    public SettingsDto getSettings(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+        return userService.getSettings(userId);
+    }
+
+    @PutMapping("/settings")
+    public void saveSettings(@RequestBody SettingsDto dto, @AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+        log.info("Saving settings for user {}", userId);
+        userService.saveSettings(userId, dto);
     }
 }

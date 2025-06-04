@@ -9,14 +9,16 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${CLERK_ISSUER_URL}
-
+#          issuer-uri: ${CLERK_ISSUER_URL}
+            issuer-uri: https://lasting-lark-17.clerk.accounts.dev
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-
+#    url: ${SPRING_DATASOURCE_URL}
+#    username: ${SPRING_DATASOURCE_USERNAME}
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres
+    username: postgres.dcdmidsgamsyejqvjzfe
+    password: UD5JMJVj6t7T_QW
     driver-class-name: org.postgresql.Driver
 
     hikari:
