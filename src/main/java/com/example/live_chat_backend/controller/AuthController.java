@@ -21,6 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequestDto request) {
+        log.info("Login request received for {}", request.email());
         User savedUser = userService.createOrUpdateUser(request);
         log.info("User logging in: {}", savedUser.getId());
         return ResponseEntity.ok(savedUser);
