@@ -19,13 +19,21 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("api/chat-rooms")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequiredArgsConstructor
 public class ChatRoomController {
 
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final WebSocketSessionRegistry sessionRegistry;
+
+    @GetMapping("/public")
+    public ResponseEntity<?> getAllPublicChatRooms() {
+        List<ChatRoom> publicRooms = chatRoomRepository.findAll().stream()
+                .filter(room -> !room.isPrivate())
+                .toList();
+        return ResponseEntity.ok(publicRooms);
+    }
 
     @GetMapping("/{roomId}/online")
     public ResponseEntity<?> getOnlineUsers(@PathVariable Long roomId) {
@@ -44,12 +52,5 @@ public class ChatRoomController {
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
 
         return ResponseEntity.ok(counts);
-    }
-    @GetMapping("/public")
-    public ResponseEntity<?> getAllPublicChatRooms() {
-        List<ChatRoom> publicRooms = chatRoomRepository.findAll().stream()
-                .filter(room -> !room.isPrivate())
-                .toList();
-        return ResponseEntity.ok(publicRooms);
     }
 }
