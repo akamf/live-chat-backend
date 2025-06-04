@@ -50,12 +50,9 @@ public class ChatController {
         log.info("System Echo: {}", message.getContent());
     }
 
-    @MessageMapping("/typing") // listens on /app/typing
-    public void handleTypingStatus(TypingStatus status) {
-        messagingTemplate.convertAndSend(
-                "/topic/" + status.roomId() + "/typing",
-                status
-        );
+    @MessageMapping("/typing")
+    public void handleTyping(@Payload TypingStatus event) {
+        messagingTemplate.convertAndSend("/topic/" + event.roomId() + "/typing", event);
     }
 
     @MessageExceptionHandler

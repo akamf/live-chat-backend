@@ -40,4 +40,10 @@ public class UserService {
             repository.save(user);
         });
     }
+
+    public User updateUserName(String userId, String newName) {
+        User user = findById(userId);
+        user.setName(newName);
+        return repository.save(user);
+    }
 }
