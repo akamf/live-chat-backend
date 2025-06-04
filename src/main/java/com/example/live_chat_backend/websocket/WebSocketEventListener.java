@@ -37,6 +37,9 @@ public class WebSocketEventListener {
             sessionAttributes.put("room-id", roomId);
         }
 
+        log.info("user-id = {}", userId);
+        log.info("room-id = {}", roomId);
+
         try {
             Long room = Long.valueOf(roomId);
             eventService.connectUserToRoom(userId, room);

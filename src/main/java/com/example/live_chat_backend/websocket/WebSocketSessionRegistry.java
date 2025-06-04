@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WebSocketSessionRegistry {
 
-    // Map<roomId, Set<userId>>
     private final Map<Long, Set<String>> activeUsers = new ConcurrentHashMap<>();
 
     public void register(Long roomId, String userId) {
@@ -29,7 +28,7 @@ public class WebSocketSessionRegistry {
     }
 
     public Set<String> getUsersInRoom(Long roomId) {
-        return activeUsers.getOrDefault(roomId, Set.of());
+        return activeUsers.getOrDefault(roomId, ConcurrentHashMap.newKeySet());
     }
 
     public Map<Long, Set<String>> getAll() {

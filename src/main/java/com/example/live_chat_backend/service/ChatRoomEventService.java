@@ -35,12 +35,15 @@ public class ChatRoomEventService {
             throw new IllegalStateException("Chat room is full");
         }
 
-        connectionRepo.save(ChatRoomConnection.builder()
-                .chatRoom(room)
-                .user(user)
-                .joinedAt(LocalDateTime.now())
-                .build()
-        );
+        boolean alreadyConnected = connectionRepo.existsByUserAndChatRoom(user, room);
+        if (!alreadyConnected) {
+            connectionRepo.save(ChatRoomConnection.builder()
+                    .chatRoom(room)
+                    .user(user)
+                    .joinedAt(LocalDateTime.now())
+                    .build()
+            );
+        }
         sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " joined");
 
         log.debug("User {} connected to room {}", userId, roomId);

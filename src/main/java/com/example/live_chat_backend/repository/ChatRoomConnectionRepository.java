@@ -1,7 +1,9 @@
 package com.example.live_chat_backend.repository;
 
+import com.example.live_chat_backend.entity.ChatRoom;
 import com.example.live_chat_backend.entity.ChatRoomConnection;
 import com.example.live_chat_backend.entity.ChatRoomConnectionId;
+import com.example.live_chat_backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,6 @@ public interface ChatRoomConnectionRepository extends JpaRepository<ChatRoomConn
     void deleteByUser_IdAndChatRoom_Id(String userId, Long ChatRoomId);
 
     int countByChatRoom_Id(Long roomId);
+
+    boolean existsByUserAndChatRoom(User user, ChatRoom chatRoom);
 }
