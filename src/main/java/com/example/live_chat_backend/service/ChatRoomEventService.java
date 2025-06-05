@@ -31,21 +31,26 @@ public class ChatRoomEventService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (isRoomFull(room)) {
+        ChatRoomConnection connection = connectionRepo.findByUserAndChatRoom(user, room).orElse(null);
+
+        if (isRoomFull(room) && connection == null) {
             throw new IllegalStateException("Chat room is full");
         }
 
-        boolean alreadyConnected = connectionRepo.existsByUserAndChatRoom(user, room);
-        if (!alreadyConnected) {
+        if (connection == null) {
             connectionRepo.save(ChatRoomConnection.builder()
                     .chatRoom(room)
                     .user(user)
                     .joinedAt(LocalDateTime.now())
                     .build()
             );
+        } else {
+            // Already connected – update the timestamp
+            connection.setJoinedAt(LocalDateTime.now());
+            connectionRepo.save(connection);
         }
-        sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " joined");
 
+        sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " joined");
         log.debug("User {} connected to room {}", userId, roomId);
     }
 

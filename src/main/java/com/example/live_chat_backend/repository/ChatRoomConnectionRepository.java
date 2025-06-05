@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChatRoomConnectionRepository extends JpaRepository<ChatRoomConnection, ChatRoomConnectionId> {
@@ -17,5 +18,4 @@ public interface ChatRoomConnectionRepository extends JpaRepository<ChatRoomConn
 
     int countByChatRoom_Id(Long roomId);
 
-    boolean existsByUserAndChatRoom(User user, ChatRoom chatRoom);
-}
+    Optional<ChatRoomConnection> findByUserAndChatRoom(User user, ChatRoom chatRoom);}
