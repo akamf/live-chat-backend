@@ -13,5 +13,4 @@ public class ApplicationConfig {
     public JwtHandshakeInterceptor jwtHandshakeInterceptor(JwtDecoder jwtDecoder) {
         return new JwtHandshakeInterceptor(jwtDecoder);
     }
-
 }

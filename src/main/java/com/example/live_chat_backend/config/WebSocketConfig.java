@@ -29,7 +29,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .addInterceptors(jwtHandshakeInterceptor, new RoomHandshakeInterceptor())
-                .setAllowedOriginPatterns("*")
+                .setAllowedOrigins(
+                        "http://localhost:5173",
+                        "https://live-chat-frontend-876198057788.europe-north2.run.app"
+                )
                 .withSockJS();
     }
 }
