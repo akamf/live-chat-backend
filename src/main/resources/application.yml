@@ -41,7 +41,7 @@ spring:
         jdbc:
           time_zone: UTC
         boot:
-          allow_jdbc_metadata_access: false
+          allow_jdbc_metadata_access: true
         show_sql: false
 
 server:
