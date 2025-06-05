@@ -40,8 +40,8 @@ spring:
         format_sql: true
         jdbc:
           time_zone: UTC
-        temp:
-          use_jdbc_metadata_defaults: false
+        boot:
+          allow_jdbc_metadata_access: false
         show_sql: false
 
 server:
