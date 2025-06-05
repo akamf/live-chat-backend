@@ -28,7 +28,8 @@ public class WebSocketSessionRegistry {
     }
 
     public Set<String> getUsersInRoom(Long roomId) {
-        return activeUsers.getOrDefault(roomId, ConcurrentHashMap.newKeySet());
+        Set<String> users = activeUsers.get(roomId);
+        return (users != null) ? new HashSet<>(users) : Collections.emptySet();
     }
 
     public Map<Long, Set<String>> getAll() {

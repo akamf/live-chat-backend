@@ -31,24 +31,24 @@ public class ChatRoomEventService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        ChatRoomConnection connection = connectionRepo.findByUserAndChatRoom(user, room).orElse(null);
+//        ChatRoomConnection connection = connectionRepo.findByUserAndChatRoom(user, room).orElse(null);
 
-        if (isRoomFull(room) && connection == null) {
-            throw new IllegalStateException("Chat room is full");
-        }
+//        if (isRoomFull(room) && connection == null) {
+//            throw new IllegalStateException("Chat room is full");
+//        }
 
-        if (connection == null) {
-            connectionRepo.save(ChatRoomConnection.builder()
-                    .chatRoom(room)
-                    .user(user)
-                    .joinedAt(LocalDateTime.now())
-                    .build()
-            );
-        } else {
-            // Already connected – update the timestamp
-            connection.setJoinedAt(LocalDateTime.now());
-            connectionRepo.save(connection);
-        }
+//        if (connection == null) {
+//            connectionRepo.save(ChatRoomConnection.builder()
+//                    .chatRoom(room)
+//                    .user(user)
+//                    .joinedAt(LocalDateTime.now())
+//                    .build()
+//            );
+//        } else {
+//            // Already connected – update the timestamp
+//            connection.setJoinedAt(LocalDateTime.now());
+//            connectionRepo.save(connection);
+//        }
 
         sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " joined");
         log.debug("User {} connected to room {}", userId, roomId);
@@ -58,7 +58,7 @@ public class ChatRoomEventService {
     public void disconnectUserFromRoom(String userId, Long roomId) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        connectionRepo.deleteByUser_IdAndChatRoom_Id(userId, roomId);
+//        connectionRepo.deleteByUser_IdAndChatRoom_Id(userId, roomId);
         sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " left");
         log.debug("User {} disconnected from room {}", userId, roomId);
     }
@@ -69,8 +69,8 @@ public class ChatRoomEventService {
         log.info("[Room {}] {}", roomId, content);
     }
 
-    private boolean isRoomFull(ChatRoom room) {
-        long count = connectionRepo.countByChatRoom_Id(room.getId());
-        return count >= room.getMaxUsers();
-    }
+//    private boolean isRoomFull(ChatRoom room) {
+//        long count = connectionRepo.countByChatRoom_Id(room.getId());
+//        return count >= room.getMaxUsers();
+//    }
 }
