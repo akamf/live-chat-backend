@@ -23,23 +23,31 @@ spring:
     hikari:
       connectionTimeout: 20000
       maximumPoolSize: 5
+      maxLifetime: 1800000
+      idleTimeout: 600000
+      poolName: LiveChatHikariPool
+
   sql:
     init:
       platform: postgresql
-      mode: always
+      mode: never
 
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+        temp:
+          use_jdbc_metadata_defaults: false
+        show_sql: false
 
 server:
   port: 8080
 
 logging:
   level:
-    org:
-      springframework:
-        boot:
-          autoconfigure: ERROR
+    org.springframework.boot.autoconfigure: ERROR
+    org.hibernate.SQL: ERROR

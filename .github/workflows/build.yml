@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      IMAGE_URL: europe-north2-docker.pkg.dev/jsfs-sthlm-2024-06-03/cloud-run-source-deploy/live-chat-backend/live-chat-backend:${{ github.sha }}
+      IMAGE_URL: europe-north2-docker.pkg.dev/jsfs-sthlm-2024-06-03/cloud-run-source-deploy/live-chat-backend:${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v4
