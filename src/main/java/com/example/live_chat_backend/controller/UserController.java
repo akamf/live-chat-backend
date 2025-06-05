@@ -19,6 +19,13 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping
+    public ResponseEntity<User> getUser(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+        User user = userService.findById(userId);
+        return ResponseEntity.ok(user);
+    }
+
     @PutMapping
     public ResponseEntity<User> updateUserName(
             @AuthenticationPrincipal Jwt jwt,

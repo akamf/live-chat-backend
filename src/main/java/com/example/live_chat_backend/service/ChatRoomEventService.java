@@ -50,7 +50,7 @@ public class ChatRoomEventService {
 //            connectionRepo.save(connection);
 //        }
 
-        sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " joined");
+        sendSystemMessage(String.valueOf(roomId), user.getName() + " joined");
         log.debug("User {} connected to room {}", userId, roomId);
     }
 
@@ -59,7 +59,7 @@ public class ChatRoomEventService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 //        connectionRepo.deleteByUser_IdAndChatRoom_Id(userId, roomId);
-        sendSystemMessage(String.valueOf(roomId), "User " + user.getName() + " left");
+        sendSystemMessage(String.valueOf(roomId), user.getName() + " left");
         log.debug("User {} disconnected from room {}", userId, roomId);
     }
 
